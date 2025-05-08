@@ -19,7 +19,17 @@ def index(request):
 class WeatherStatisticsView(APIView):
     http_method_names = ("get",)
 
+    def check_token(self, request):
+        x_token = request.headers.get('x-token')
+
+        if not x_token or len(x_token) != 32:
+            raise APIException(
+                detail="Invalid x-token header. It should contain exactly 32 characters.", code=400)
+
+
     def get(self, request, date: str):
+        self.check_token(request)
+
         city = settings.CITY_TO_TRACK
         if not city:
             raise APIException(detail="Couldn't fetch env data", code=500)

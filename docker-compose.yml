@@ -1,0 +1,51 @@
+services:
+  django:
+    container_name: django-container
+    build:
+      context: .
+      dockerfile: Dockerfile.Django
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - db
+
+  redis:
+    container_name: redis-container
+    restart: always
+    image: redis:latest
+    expose:
+      - "6379"
+
+  db:
+    container_name: db-container
+    restart: always
+    image: postgres
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER_NAME}
+      POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
+
+  celery:
+    container_name: celery-worker-container
+    build:
+      context: .
+      dockerfile: ./Dockerfile.Celery
+    depends_on:
+      - redis
+
+  celery-beat:
+    container_name: celery-beat-container
+    build:
+      context: .
+      dockerfile: ./Dockerfile.CeleryBeat
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:
+
