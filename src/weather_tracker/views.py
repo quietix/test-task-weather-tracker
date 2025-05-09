@@ -1,6 +1,5 @@
 from datetime import timezone, timedelta, datetime
 
-from django.http import HttpResponse
 from django.conf import settings
 from django.utils.dateparse import parse_date
 
@@ -10,10 +9,7 @@ from rest_framework.views import APIView
 
 from weather_tracker.models import TemperatureRecord
 from weather_tracker.serializers import TemperatureRecordSerializer
-
-
-def index(request):
-    return HttpResponse("Hello")
+from weather_tracker.exceptions import InvalidTokenException, InvalidDateFormat
 
 
 class WeatherStatisticsView(APIView):
@@ -23,24 +19,23 @@ class WeatherStatisticsView(APIView):
         x_token = request.headers.get('x-token')
 
         if not x_token or len(x_token) != 32:
-            raise APIException(
-                detail="Invalid x-token header. It should contain exactly 32 characters.", code=400)
+            raise InvalidTokenException()
 
 
     def get(self, request, date: str):
         self.check_token(request)
 
+        parsed_date = parse_date(date)
+        if not parsed_date:
+            raise InvalidDateFormat
+
         city = settings.CITY_TO_TRACK
         if not city:
-            raise APIException(detail="Couldn't fetch env data", code=500)
+            raise APIException(detail="Couldn't fetch env data")
 
         first_record = TemperatureRecord.objects.filter(city=city).first()
         if not first_record:
             return Response([])
-
-        parsed_date = parse_date(date)
-        if not parsed_date:
-            raise APIException(detail="Invalid date format. Use YYYY-MM-DD.", code=400)
 
         tz_offset = timezone(timedelta(seconds=first_record.timezone_offset))
 

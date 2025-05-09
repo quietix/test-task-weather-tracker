@@ -3,7 +3,6 @@ services:
     container_name: django-container
     build: .
     volumes:
-      - .:/app
       - static_volume:/app/src/static
     depends_on:
       - redis
