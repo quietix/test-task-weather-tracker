@@ -1,0 +1,3 @@
+[flake8]
+max-line-length = 100
+exclude = .idea,.venv,__pycache__,src/weather_tracker/migrations

@@ -21,7 +21,6 @@ class WeatherStatisticsView(APIView):
         if not x_token or len(x_token) != 32:
             raise InvalidTokenException()
 
-
     def get(self, request, date: str):
         self.check_token(request)
 
