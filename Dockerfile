@@ -7,7 +7,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 6379
-
-WORKDIR /app/src
-CMD ["celery", "-A", "core", "beat", "--loglevel=info"]
+CMD ["./docker-entrypoint.sh"]

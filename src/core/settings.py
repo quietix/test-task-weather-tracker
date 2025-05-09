@@ -8,11 +8,11 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = bool(int(os.environ['DEBUG']))
+DEBUG = bool(int(os.getenv('DEBUG')))
 
-if ALLOWED_HOSTS := os.getenv("ALLOWED_HOSTS"):
+if ALLOWED_HOSTS := os.getenv('ALLOWED_HOSTS'):
     ALLOWED_HOSTS = ALLOWED_HOSTS.split(',')
 
 INSTALLED_APPS = [
@@ -89,7 +89,7 @@ TIME_ZONE = 'UTC'
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
@@ -114,3 +114,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # Admin config
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
+# CSRF additional config
+if CSRF_TRUSTED_ORIGINS:= os.getenv('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(',')
